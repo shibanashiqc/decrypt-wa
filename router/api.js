@@ -24,7 +24,10 @@ router.post("/process-media", async (req, res) => {
                 console.log('The file was saved!');
                 // server url
                 
-                var url = 'https://wa-decrypt.ospo.in/' + filename.replace('public/', '');
+                // var url = 'https://wa-decrypt.ospo.in/' + filename.replace('public/', '');
+                
+                var url = req.protocol + '://' + req.get('host') + '/' + filename.replace('public/', '');
+                
                 res.status(200).json({
                     status: 'success',
                     message: 'File saved successfully',
