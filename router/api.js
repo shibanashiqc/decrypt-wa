@@ -18,7 +18,9 @@ router.post("/process-media", async (req, res) => {
                     return res.status(500).json({
                         status: 'error',
                         message: 'Error saving file',
-                        data: {},
+                        data: {
+                            error: err,
+                        },
                     });
                 }
                 console.log('The file was saved!');
