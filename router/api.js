@@ -37,7 +37,9 @@ router.post("/process-media", async (req, res) => {
             res.status(500).json({
                 status: 'error',
                 message: 'Error processing message',
-                data: {},
+                data: {
+                    error: error,
+                },
             });
         }
     } else {
