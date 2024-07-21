@@ -3,6 +3,9 @@ const router = express.Router();
 import fs from 'fs';
 import { decryptMedia } from '@open-wa/wa-decrypt';
 import mime from 'mime-types';
+import ffmpeg from 'fluent-ffmpeg'
+import { exec } from 'child_process';
+
 
 
 
@@ -27,20 +30,25 @@ router.post("/process-media", async (req, res) => {
                 console.log('The file was saved!');
                 
                 if(filename.endsWith('.oga')) {
-                    fs.rename(filename, filename.replace('.oga', '.ogg'), (err) => {
-                        if (err) {
-                            console.error('Error renaming file:', err);
+                    
+                    var newFilename = filename.replace('.oga', '.mp3');
+                    exec(`ffmpeg -i ${filename} ${newFilename}`, async (error, stdout, stderr) =>  {
+                        if (error) {
+                            console.error('Error converting file:', error);
                             return res.status(500).json({
                                 status: 'error',
-                                message: 'Error renaming file',
+                                message: 'Error converting file',
                                 data: {
-                                    error: err,
+                                    error: error,
                                 },
                             });
                         }
+                        // delete the old file
+                        await fs.unlinkSync(filename);
                     });
                     
-                    filename = filename.replace('.oga', '.ogg');
+                filename = filename.replace('.oga', '.mp3');
+                    
                 }
                 
                 var url = 'https://wa-decrypt.ospo.in/' + filename.replace('public/', '');
