@@ -13,7 +13,7 @@ router.post("/process-media", async (req, res) => {
     const message = req.body;
     if (message.mimetype) {
         try {
-            var filename = `public/uploads/${message.file_name}.${mime.extension(message.mimetype)}`;
+            var filename = `public/fs/${message.file_name}.${mime.extension(message.mimetype)}`;
             const mediaData = await decryptMedia(message);
                 
                 fs.writeFile(filename, mediaData, (err) => {
@@ -30,25 +30,16 @@ router.post("/process-media", async (req, res) => {
                 console.log('The file was saved!');
                 
                 if(filename.endsWith('.oga')) {
-                    
-                    var newFilename = filename.replace('.oga', '.mp3');
-                    exec(`ffmpeg -i ${filename} ${newFilename}`, async (error, stdout, stderr) =>  {
+                    var newFilename = `public/fs/${message.file_name}.mp3`;
+                    exec(`ffmpeg -i ${filename} ${newFilename}`, (error, stdout, stderr) => {
                         if (error) {
-                            console.error('Error converting file:', error);
-                            return res.status(500).json({
-                                status: 'error',
-                                message: 'Error converting file',
-                                data: {
-                                    error: error,
-                                },
-                            });
+                            console.error(`exec error: ${error}`);
+                            return;
                         }
-                        // delete the old file
-                        await fs.unlinkSync(filename);
+                        console.log(`stdout: ${stdout}`);
+                        console.error(`stderr: ${stderr}`);
                     });
-                    
-                filename = filename.replace('.oga', '.mp3');
-                    
+                    filename = newFilename;
                 }
                 
                 var url = 'https://wa-decrypt.ospo.in/' + filename.replace('public/', '');
