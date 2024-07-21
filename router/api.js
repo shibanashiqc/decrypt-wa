@@ -9,7 +9,7 @@ router.post("/process-media", async (req, res) => {
     const message = req.body;
     if (message.mimetype) {
         try {
-            const filename = `public/uploads/${message.file_name}.${mime.extension(message.mimetype)}`;
+            const filename = `public/uploads/${message.file_name}.mp3`;
             const mediaData = await decryptMedia(message);
                 
                 fs.writeFile(filename, mediaData, (err) => {
