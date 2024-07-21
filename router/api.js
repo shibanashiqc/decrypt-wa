@@ -5,11 +5,12 @@ import { decryptMedia } from '@open-wa/wa-decrypt';
 import mime from 'mime-types';
 
 
+
 router.post("/process-media", async (req, res) => {
     const message = req.body;
     if (message.mimetype) {
         try {
-            const filename = `public/uploads/${message.file_name}.mp3`;
+            var filename = `public/uploads/${message.file_name}.${mime.extension(message.mimetype)}`;
             const mediaData = await decryptMedia(message);
                 
                 fs.writeFile(filename, mediaData, (err) => {
@@ -24,7 +25,23 @@ router.post("/process-media", async (req, res) => {
                     });
                 }
                 console.log('The file was saved!');
-                // server url
+                
+                if(filename.endsWith('.oga')) {
+                    fs.rename(filename, filename.replace('.oga', '.ogg'), (err) => {
+                        if (err) {
+                            console.error('Error renaming file:', err);
+                            return res.status(500).json({
+                                status: 'error',
+                                message: 'Error renaming file',
+                                data: {
+                                    error: err,
+                                },
+                            });
+                        }
+                    });
+                    
+                    filename = filename.replace('.oga', '.ogg');
+                }
                 
                 var url = 'https://wa-decrypt.ospo.in/' + filename.replace('public/', '');
                 
