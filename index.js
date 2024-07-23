@@ -10,6 +10,8 @@ import bodyParser from "body-parser";
 app.use(express.static('public'));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json()); ;
+app.use(express.json({limit: '50mb'}));
+app.use(express.urlencoded({limit: '50mb'}));
 
 app.listen(port, () => {
     console.log(`server is running on port ${port}`);
