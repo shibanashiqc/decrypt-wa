@@ -102,11 +102,10 @@ router.post('/convert-wa-oga', async (req, res) => {
 
 router.post('/media-downloader', async (req, res) => {
     try {
-        console.log('Request:', req);
+        console.log('Request:', req.body);
         const file = req.body.audio;
         
         upload.single('audio')(req, res, async (err) => {
-            
             if (err) {
                 console.error('Error uploading file:', err);
                 return res.status(500).json({
@@ -117,13 +116,69 @@ router.post('/media-downloader', async (req, res) => {
                     },
                 });
             }
-            console.log('File uploaded:', req);
-            
-            const ext = req.body.ext ?? 'mp3';
-            
+            console.log('File uploaded:', req.file);
 
             var filename = `public/dw/${req.file.originalname}`;
-            var newFilename = `public/dw/${req.file.originalname}.${ext}`;
+            var newFilename = `public/dw/${req.file.originalname}.mp4`;
+            // two channels
+            exec(`ffmpeg -i ${filename} -metadata vendor="WhatsApp" -c:a aac -ac 2 ${newFilename}`, (error, stdout, stderr) => {
+                if (error) {
+                    console.error(`exec error: ${error}`);
+                    return;
+                }
+                console.log(`stdout: ${stdout}`);
+                console.error(`stderr: ${stderr}`);
+            });
+
+            var url = 'https://wa-decrypt.ospo.in/' + newFilename.replace('public/', '');
+
+            res.status(200).json({
+                status: 'success',
+                message: 'File saved successfully',
+                data: {
+                    url: url,
+                },
+            });
+        });
+        
+
+    } catch (error) {
+        console.error('Error processing message:', error);
+        res.status(500).json({
+            status: 'error',
+            message: 'Error processing message',
+            data: {
+                error: error,
+            },
+        });
+    }
+
+
+}
+);
+
+
+
+router.post('/convert-mp3', async (req, res) => {
+    try {
+        console.log('Request:', req.body);
+        const file = req.body.audio;
+        
+        upload.single('audio')(req, res, async (err) => {
+            if (err) {
+                console.error('Error uploading file:', err);
+                return res.status(500).json({
+                    status: 'error',
+                    message: 'Error uploading file',
+                    data: {
+                        error: err,
+                    },
+                });
+            }
+            console.log('File uploaded:', req.file);
+
+            var filename = `public/dw/${req.file.originalname}`;
+            var newFilename = `public/dw/${req.file.originalname}.mp3`;
             // two channels
             exec(`ffmpeg -i ${filename} -metadata vendor="WhatsApp" ${newFilename}`, (error, stdout, stderr) => {
                 if (error) {
