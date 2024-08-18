@@ -124,7 +124,7 @@ router.post('/media-downloader', async (req, res) => {
             var filename = `public/dw/${req.file.originalname}`;
             var newFilename = `public/dw/${req.file.originalname}.${ext}`;
             // two channels
-            exec(`ffmpeg -i ${filename} -metadata vendor="WhatsApp" ${newFilename}`, (error, stdout, stderr) => {
+            exec(`ffmpeg -i ${filename} -metadata vendor="WhatsApp"  -ac 2 ${newFilename}`, (error, stdout, stderr) => {
                 if (error) {
                     console.error(`exec error: ${error}`);
                     return;
