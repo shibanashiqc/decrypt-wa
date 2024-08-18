@@ -118,13 +118,13 @@ router.post('/media-downloader', async (req, res) => {
             }
             console.log('File uploaded:', req.file);
             
-            const ext = req.ext ?? 'mp3';
+            const ext = req.body.ext ?? 'mp3';
             
 
             var filename = `public/dw/${req.file.originalname}`;
             var newFilename = `public/dw/${req.file.originalname}.${ext}`;
             // two channels
-            exec(`ffmpeg -i ${filename} -metadata vendor="WhatsApp" -c:a  ${newFilename}`, (error, stdout, stderr) => {
+            exec(`ffmpeg -i ${filename} -metadata vendor="WhatsApp" ${newFilename}`, (error, stdout, stderr) => {
                 if (error) {
                     console.error(`exec error: ${error}`);
                     return;
