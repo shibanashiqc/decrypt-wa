@@ -102,7 +102,7 @@ router.post('/convert-wa-oga', async (req, res) => {
 
 router.post('/media-downloader', async (req, res) => {
     try {
-        console.log('Request:', req.body);
+        console.log('Request:', req);
         const file = req.body.audio;
         
         upload.single('audio')(req, res, async (err) => {
