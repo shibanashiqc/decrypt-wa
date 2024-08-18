@@ -104,7 +104,6 @@ router.post('/media-downloader', async (req, res) => {
     try {
         console.log('Request:', req.body);
         const file = req.body.audio;
-        const ext = req.body.ext ?? 'mp4';
         
         upload.single('audio')(req, res, async (err) => {
             if (err) {
@@ -119,6 +118,7 @@ router.post('/media-downloader', async (req, res) => {
             }
             console.log('File uploaded:', req.file);
             
+            const ext = req.body.ext ?? 'mp4';
             
 
             var filename = `public/dw/${req.file.originalname}`;
