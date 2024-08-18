@@ -106,6 +106,7 @@ router.post('/media-downloader', async (req, res) => {
         const file = req.body.audio;
         
         upload.single('audio')(req, res, async (err) => {
+            
             if (err) {
                 console.error('Error uploading file:', err);
                 return res.status(500).json({
@@ -116,7 +117,7 @@ router.post('/media-downloader', async (req, res) => {
                     },
                 });
             }
-            console.log('File uploaded:', req.file);
+            console.log('File uploaded:', req);
             
             const ext = req.body.ext ?? 'mp3';
             
